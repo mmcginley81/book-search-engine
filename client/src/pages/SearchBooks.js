@@ -17,8 +17,8 @@ const SearchBooks = () => {
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
 
-  // My code for useMutation
-  const [saveBook, {error}] = useMutation(SAVE_BOOK)
+  // // My code for useMutation
+  // const [saveBook, {error}] = useMutation(SAVE_BOOK);
 
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
@@ -75,12 +75,16 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await saveBook(bookToSave, token);
+      const response = await saveBook({
+        //need to find out how to get the right variables
+        variables: { bookData: bookId }
+      });
 
       if (!response.ok) {
         throw new Error('something went wrong!');
       }
 
+      console.log(bookToSave)
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
@@ -95,7 +99,7 @@ const SearchBooks = () => {
           <h1>Search for Books!</h1>
           <Form onSubmit={handleFormSubmit}>
             <Form.Row>
-              <Col xs={12} md={8}>
+              <Col xs={12} md={8} lg={3}>
                 <Form.Control
                   name='searchInput'
                   value={searchInput}
@@ -105,7 +109,7 @@ const SearchBooks = () => {
                   placeholder='Search for a book'
                 />
               </Col>
-              <Col xs={12} md={4}>
+              <Col xs={12} md={4} lg={3}>
                 <Button type='submit' variant='success' size='lg'>
                   Submit Search
                 </Button>

@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-import { createUser } from '../utils/API';
+// import useMutation and ADD_USER
+import { useMutation } from '@apollo/react-hooks';
+import { ADD_USER } from '../utils/mutations';
+
+//dont need this line below
+// import { createUser } from '../utils/API';
+
 import Auth from '../utils/auth';
 
 const SignupForm = () => {
@@ -11,6 +17,9 @@ const SignupForm = () => {
   const [validated] = useState(false);
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
+
+  // importing the addUser mutation
+  const [addUser, { error }] = useMutation(ADD_USER);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -27,25 +36,30 @@ const SignupForm = () => {
       event.stopPropagation();
     }
 
+    //change the API to GQL Here
     try {
-      const response = await createUser(userFormData);
+      const response = await addUser(
+        { variables: {...userFormData}
+      });
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      // if (!response.ok) {
+      //   throw new Error('something went wrong!');
+      // }
 
-      const { token, user } = await response.json();
-      console.log(user);
-      Auth.login(token);
+      //const { token, user } = await response.json();
+      //console.log(data);
+      console.log(response.data.addUser)
+      Auth.login(response.data.addUser.token);
+
     } catch (err) {
       console.error(err);
       setShowAlert(true);
     }
 
     setUserFormData({
-      username: '',
-      email: '',
-      password: '',
+      username: "",
+      email: "",
+      password: "",
     });
   };
 
@@ -61,12 +75,12 @@ const SignupForm = () => {
         <Form.Group>
           <Form.Label htmlFor='username'>Username</Form.Label>
           <Form.Control
-            type='text'
+            type="text"
             placeholder='Your username'
-            name='username'
+            name="username"
+            id="username"
             onChange={handleInputChange}
             value={userFormData.username}
-            required
           />
           <Form.Control.Feedback type='invalid'>Username is required!</Form.Control.Feedback>
         </Form.Group>
@@ -76,10 +90,10 @@ const SignupForm = () => {
           <Form.Control
             type='email'
             placeholder='Your email address'
-            name='email'
+            name="email"
+            id="email"
             onChange={handleInputChange}
             value={userFormData.email}
-            required
           />
           <Form.Control.Feedback type='invalid'>Email is required!</Form.Control.Feedback>
         </Form.Group>
@@ -87,12 +101,12 @@ const SignupForm = () => {
         <Form.Group>
           <Form.Label htmlFor='password'>Password</Form.Label>
           <Form.Control
-            type='password'
+            type="password"
             placeholder='Your password'
-            name='password'
+            name="password"
+            id="password"
             onChange={handleInputChange}
             value={userFormData.password}
-            required
           />
           <Form.Control.Feedback type='invalid'>Password is required!</Form.Control.Feedback>
         </Form.Group>
@@ -103,6 +117,7 @@ const SignupForm = () => {
           Submit
         </Button>
       </Form>
+      {error && <div>Signup failed</div>}
     </>
   );
 };
