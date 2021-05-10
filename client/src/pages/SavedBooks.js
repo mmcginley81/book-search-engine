@@ -3,8 +3,9 @@ import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap
 
 // import useQuery() and useMutation()
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { GET_ME } from '../utils/queries';
 
+// import my GET_ME and REMOVE_BOOK from my gql data
+import { GET_ME } from '../utils/queries';
 import { REMOVE_BOOK } from '../utils/mutations';
 
 import Auth from '../utils/auth';
