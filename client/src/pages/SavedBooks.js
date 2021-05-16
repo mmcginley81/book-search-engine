@@ -3,7 +3,7 @@ import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap
 
 // import useQuery() and useMutation()
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { useParams } from '@apollo/react-hooks'
+// import { useParams } from '@apollo/react-hooks'
 
 // import my GET_ME and REMOVE_BOOK from my gql data
 import { GET_ME } from '../utils/queries';
@@ -15,7 +15,7 @@ import { removeBookId } from '../utils/localStorage';
 const SavedBooks = () => {
 
   // import useParams looking through module 21.4-5
-  //const { id: bookId } = useParams();
+  // const { bookData: id } = useParams();
 
   // import useQuery 
   const { loading, data } = useQuery(GET_ME);
@@ -23,41 +23,10 @@ const SavedBooks = () => {
   //define userData
   const userData = data?.me || {};
 
-  //const [userData, setUserData] = useState(userInputData);
-
-  
 
   // use this to determine if `useEffect()` hook needs to run again
   const userDataLength = Object.keys(userData).length;
 
-
-
-  // useEffect(() => {
-  //   const getUserData = async () => {
-  //     try {
-  //       const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-  //       if (!token) {
-  //         return false;
-  //       }
-
-  //       const response = await getMe(token);
-
-  //       if (!response.ok) {
-  //         throw new Error('something went wrong!');
-  //       }
-
-  //       const user = await response.json();
-  //       setUserData(user);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-
-  //   getUserData();
-  // }, [userDataLength]);
-
-  // create function that accepts the book's mongo _id value as param and deletes the book from the database
   
   //start removeBook functionality
   const [removeBook, { error }] = useMutation(REMOVE_BOOK);
@@ -72,11 +41,12 @@ const SavedBooks = () => {
     }
 
     try {
-      const response = await removeBook(
-        {variables: {bookData: {bookId}}});
+      const { data } = await removeBook(
+        {variables: {bookId}});
 
-      // // upon success, remove book's id from localStorage
-      // removeBookId(bookId);
+      // upon success, remove book's id from localStorage
+      removeBookId(bookId);
+      console.log(data)
       console.log(bookId)
     } catch (err) {
       console.error(err);

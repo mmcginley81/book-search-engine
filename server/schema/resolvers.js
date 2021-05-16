@@ -50,25 +50,25 @@ const resolvers = {
             const token = signToken(user)
 
             return { token, user };
+        },
+        saveBook: async (parent, { bookData }, context) => {
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: context.user._id },
+                { $push: {savedBooks: bookData}},
+                { new: true }
+            )
+            
+            return updatedUser
+        },
+        removeBook: async (parent, { bookId }, context) => {
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: context.user._id },
+                { $pull: {savedBooks: {bookId}}},
+                { new: true }
+            )
+            
+            return updatedUser
         }
-        // saveBook: async (parent, { bookData }, context) => {
-        //     const updatedUser = await User.findOneAndUpdate(
-        //         { _id: context.user._id },
-        //         { $push: {savedBooks: bookData}},
-        //         { new: true }
-        //     )
-            
-        //     return updatedUser
-        // },
-        // removeBook: async (parent, { bookId }, context) => {
-        //     const updatedUser = await User.findOneAndUpdate(
-        //         { _id: context.user._id },
-        //         { $pull: {savedBooks: {bookId}}},
-        //         { new: true }
-        //     )
-            
-        //     return updatedUser
-        // }
         
     }
 

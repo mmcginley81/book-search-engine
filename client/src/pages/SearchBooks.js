@@ -8,7 +8,7 @@ import { useMutation } from '@apollo/react-hooks';
 import { SAVE_BOOK } from '../utils/mutations';
 
 //get rid of line 1 below 
-import { saveBook, searchGoogleBooks } from '../utils/API';
+import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
 const SearchBooks = () => {
@@ -17,8 +17,8 @@ const SearchBooks = () => {
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
 
-  // // My code for useMutation
-  // const [saveBook, {error}] = useMutation(SAVE_BOOK);
+  // My code for useMutation
+  const [saveBook, {error}] = useMutation(SAVE_BOOK);
 
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
@@ -57,6 +57,7 @@ const SearchBooks = () => {
 
       setSearchedBooks(bookData);
       setSearchInput('');
+      console.log(bookData)
     } catch (err) {
       console.error(err);
     }
@@ -64,6 +65,10 @@ const SearchBooks = () => {
 
   // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
+
+    console.log(bookId)
+    console.log('clicked');
+
     // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
 
@@ -75,22 +80,35 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await saveBook({
-        //need to find out how to get the right variables
-        variables: { bookData: bookId }
+      const { data } = await saveBook({
+        variables: { bookData: { ...bookToSave } },
       });
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      console.log(data);
+      console.log(savedBookIds);
 
-      console.log(bookToSave)
-      // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
       console.error(err);
     }
   };
+    
+
+      
+
+      // if (!response.ok) {
+      //   throw new Error('something went wrong!');
+      // }
+
+      // console.log('here')
+      // console.log(bookToSave)
+
+    //   // if book successfully saves to user's account, save book id to state
+    //   setSavedBookIds([...savedBookIds, bookToSave.bookId]);
+    // } catch (err) {
+    //   console.error(err);
+    // }
+  
 
   return (
     <>
